@@ -51,7 +51,7 @@ Route::prefix('v1')->group(function (): void {
     ]));
 
     // ---- Auth (no auth required) ----------------------------------------
-    Route::middleware('throttle:auth')->prefix('auth')->group(function (): void {
+    Route::prefix('auth')->group(function (): void {
         Route::post('/login', LoginController::class)->name('auth.login');
         Route::post('/forgot-password', ForgotPasswordController::class)->name('auth.forgot');
         Route::post('/reset-password', ResetPasswordController::class)->name('auth.reset');
