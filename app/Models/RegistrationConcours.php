@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Enums\ArchitectureConcours;
 use App\Support\Enums\EnaFiliere;
 use App\Support\Enums\EnaPreferredFormat;
 use App\Support\Enums\EnaRegionalGrade;
@@ -26,7 +27,9 @@ use Illuminate\Notifications\Notifiable;
  * @property EnaFiliere $filiere
  * @property EnaRegionalGrade $regional_grade
  * @property string $city
+ * @property ArchitectureConcours $concours_vise
  * @property EnaPreferredFormat $preferred_format
+ * @property string|null $message
  * @property bool $passed_ena_before
  * @property RegistrationConcoursStatus $status
  * @property RegistrationConcoursPriority $priority
@@ -53,7 +56,9 @@ class RegistrationConcours extends Model
         'filiere',
         'regional_grade',
         'city',
+        'concours_vise',
         'preferred_format',
+        'message',
         'passed_ena_before',
         'status',
         'priority',
@@ -70,6 +75,7 @@ class RegistrationConcours extends Model
         return [
             'filiere' => EnaFiliere::class,
             'regional_grade' => EnaRegionalGrade::class,
+            'concours_vise' => ArchitectureConcours::class,
             'preferred_format' => EnaPreferredFormat::class,
             'passed_ena_before' => 'boolean',
             'status' => RegistrationConcoursStatus::class,
@@ -154,6 +160,11 @@ class RegistrationConcours extends Model
     public function scopeFormat(Builder $query, ?string $value): Builder
     {
         return $value === null || $value === '' ? $query : $query->where('preferred_format', $value);
+    }
+
+    public function scopeConcoursVise(Builder $query, ?string $value): Builder
+    {
+        return $value === null || $value === '' ? $query : $query->where('concours_vise', $value);
     }
 
     public function scopeRegionalGrade(Builder $query, ?string $value): Builder

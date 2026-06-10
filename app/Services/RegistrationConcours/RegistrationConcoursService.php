@@ -8,6 +8,7 @@ use App\Models\RegistrationConcours;
 use App\Models\User;
 use App\Notifications\NewRegistrationConcoursNotification;
 use App\Notifications\RegistrationConcoursAcknowledgementNotification;
+use App\Support\Enums\ArchitectureConcours;
 use App\Support\Enums\EnaFiliere;
 use App\Support\Enums\EnaRegionalGrade;
 use App\Support\Enums\RegistrationConcoursStatus;
@@ -30,8 +31,9 @@ final class RegistrationConcoursService
      * @param array{
      *   full_name:string, whatsapp_phone:string, email:string,
      *   filiere:EnaFiliere, regional_grade:EnaRegionalGrade,
-     *   city:string, preferred_format:\App\Support\Enums\EnaPreferredFormat,
-     *   passed_ena_before:bool
+     *   city:string, concours_vise:ArchitectureConcours,
+     *   preferred_format:\App\Support\Enums\EnaPreferredFormat,
+     *   message:?string, passed_ena_before:bool
      * } $data
      */
     public function create(array $data, Request $request): RegistrationConcours

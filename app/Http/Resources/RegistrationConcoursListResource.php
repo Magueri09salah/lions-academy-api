@@ -36,6 +36,10 @@ class RegistrationConcoursListResource extends JsonResource
                 'value' => $this->preferred_format?->value,
                 'label' => $this->preferred_format?->label(),
             ],
+            'concours_vise' => [
+                'value' => $this->concours_vise?->value,
+                'label' => $this->concours_vise?->label(),
+            ],
             'status' => [
                 'value' => $this->status?->value,
                 'label' => $this->status?->label(),
