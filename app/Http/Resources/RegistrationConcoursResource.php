@@ -6,6 +6,7 @@ namespace App\Http\Resources;
 
 use App\Models\RegistrationConcours;
 use App\Services\Registration\WhatsAppLinkBuilder;
+use App\Support\Enums\ArchitectureConcours;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -42,10 +43,15 @@ class RegistrationConcoursResource extends JsonResource
                 'value' => $this->preferred_format?->value,
                 'label' => $this->preferred_format?->label(),
             ],
-            'concours_vise' => [
-                'value' => $this->concours_vise?->value,
-                'label' => $this->concours_vise?->label(),
-            ],
+            // Array of selected concours so the admin UI can render
+            // one badge per choice. Each item: { value, label }.
+            'concours_vise' => array_map(
+                fn (string $v) => [
+                    'value' => $v,
+                    'label' => ArchitectureConcours::tryFrom($v)?->label() ?? $v,
+                ],
+                (array) ($this->concours_vise ?? []),
+            ),
             'message' => $this->message,
             'passed_ena_before' => (bool) $this->passed_ena_before,
             'status' => [

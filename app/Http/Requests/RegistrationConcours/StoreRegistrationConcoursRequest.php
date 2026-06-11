@@ -28,12 +28,27 @@ class StoreRegistrationConcoursRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // Normalise concours_vise into an array — the frontend now sends
+        // an array (multi-select), but accept a single string too for
+        // backward compatibility with anything still POSTing the old shape.
+        $concoursVise = $this->input('concours_vise');
+        if (is_string($concoursVise)) {
+            $concoursVise = [$concoursVise];
+        }
+        $concoursVise = array_values(array_unique(array_filter(
+            (array) $concoursVise,
+            fn ($v) => is_string($v) && $v !== '',
+        )));
+        if ($concoursVise === []) {
+            $concoursVise = [ArchitectureConcours::Ena->value];
+        }
+
         $this->merge([
             'full_name' => trim((string) $this->input('full_name')),
             'whatsapp_phone' => $this->normalisePhone($this->input('whatsapp_phone')),
             'email' => trim(mb_strtolower((string) $this->input('email'))),
             'city' => trim((string) $this->input('city')),
-            'concours_vise' => $this->input('concours_vise') ?: ArchitectureConcours::Ena->value,
+            'concours_vise' => $concoursVise,
             'message' => is_string($this->input('message')) ? trim($this->input('message')) : null,
             'passed_ena_before' => $this->boolean('passed_ena_before'),
         ]);
@@ -54,7 +69,9 @@ class StoreRegistrationConcoursRequest extends FormRequest
             'filiere' => ['required', Rule::enum(EnaFiliere::class)],
             'regional_grade' => ['required', Rule::enum(EnaRegionalGrade::class)],
             'city' => ['required', 'string', Rule::in(EnaCities::LIST)],
-            'concours_vise' => ['required', Rule::enum(ArchitectureConcours::class)],
+            // Array of architecture concours values — at least one required.
+            'concours_vise' => ['required', 'array', 'min:1'],
+            'concours_vise.*' => ['string', Rule::enum(ArchitectureConcours::class)],
             'preferred_format' => ['required', Rule::enum(EnaPreferredFormat::class)],
             'message' => ['nullable', 'string', 'max:2000'],
             'passed_ena_before' => ['required', 'boolean'],
@@ -86,6 +103,9 @@ class StoreRegistrationConcoursRequest extends FormRequest
     {
         return [
             'whatsapp_phone.regex' => 'Le numéro WhatsApp est invalide.',
+            'concours_vise.required' => 'Merci de sélectionner au moins un concours.',
+            'concours_vise.min' => 'Merci de sélectionner au moins un concours.',
+            'concours_vise.*.enum' => 'L\'un des concours sélectionnés est invalide.',
         ];
     }
 
@@ -103,7 +123,8 @@ class StoreRegistrationConcoursRequest extends FormRequest
             'filiere' => EnaFiliere::from((string) $this->validated('filiere')),
             'regional_grade' => EnaRegionalGrade::from((string) $this->validated('regional_grade')),
             'city' => (string) $this->validated('city'),
-            'concours_vise' => ArchitectureConcours::from((string) $this->validated('concours_vise')),
+            // Array of string enum values — the model casts as JSON.
+            'concours_vise' => array_values((array) $this->validated('concours_vise')),
             'preferred_format' => EnaPreferredFormat::from((string) $this->validated('preferred_format')),
             'message' => $this->validated('message') ? (string) $this->validated('message') : null,
             'passed_ena_before' => (bool) $this->validated('passed_ena_before'),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources;
 
 use App\Models\RegistrationConcours;
+use App\Support\Enums\ArchitectureConcours;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,10 +37,14 @@ class RegistrationConcoursListResource extends JsonResource
                 'value' => $this->preferred_format?->value,
                 'label' => $this->preferred_format?->label(),
             ],
-            'concours_vise' => [
-                'value' => $this->concours_vise?->value,
-                'label' => $this->concours_vise?->label(),
-            ],
+            // Array of selected concours; admin list renders compact badges.
+            'concours_vise' => array_map(
+                fn (string $v) => [
+                    'value' => $v,
+                    'label' => ArchitectureConcours::tryFrom($v)?->label() ?? $v,
+                ],
+                (array) ($this->concours_vise ?? []),
+            ),
             'status' => [
                 'value' => $this->status?->value,
                 'label' => $this->status?->label(),

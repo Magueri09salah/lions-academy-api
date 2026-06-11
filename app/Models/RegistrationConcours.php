@@ -27,7 +27,7 @@ use Illuminate\Notifications\Notifiable;
  * @property EnaFiliere $filiere
  * @property EnaRegionalGrade $regional_grade
  * @property string $city
- * @property ArchitectureConcours $concours_vise
+ * @property array<int, string> $concours_vise
  * @property EnaPreferredFormat $preferred_format
  * @property string|null $message
  * @property bool $passed_ena_before
@@ -75,7 +75,10 @@ class RegistrationConcours extends Model
         return [
             'filiere' => EnaFiliere::class,
             'regional_grade' => EnaRegionalGrade::class,
-            'concours_vise' => ArchitectureConcours::class,
+            // Stored as JSON; cast to array. Each item is an
+            // ArchitectureConcours value (string). The Resource layer
+            // converts each one to its labelled form for the frontend.
+            'concours_vise' => 'array',
             'preferred_format' => EnaPreferredFormat::class,
             'passed_ena_before' => 'boolean',
             'status' => RegistrationConcoursStatus::class,
@@ -164,7 +167,9 @@ class RegistrationConcours extends Model
 
     public function scopeConcoursVise(Builder $query, ?string $value): Builder
     {
-        return $value === null || $value === '' ? $query : $query->where('concours_vise', $value);
+        // concours_vise is now a JSON array; whereJsonContains matches
+        // any lead whose array includes the given value.
+        return $value === null || $value === '' ? $query : $query->whereJsonContains('concours_vise', $value);
     }
 
     public function scopeRegionalGrade(Builder $query, ?string $value): Builder

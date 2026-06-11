@@ -31,7 +31,7 @@ final class RegistrationConcoursService
      * @param array{
      *   full_name:string, whatsapp_phone:string, email:string,
      *   filiere:EnaFiliere, regional_grade:EnaRegionalGrade,
-     *   city:string, concours_vise:ArchitectureConcours,
+     *   city:string, concours_vise:array<int, string>,
      *   preferred_format:\App\Support\Enums\EnaPreferredFormat,
      *   message:?string, passed_ena_before:bool
      * } $data
