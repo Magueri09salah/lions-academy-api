@@ -48,10 +48,16 @@ final class AuthService
             ]);
         }
 
-        // Revoke any prior token issued to the same device so a single
-        // device only ever holds one valid token at a time.
-        $user->tokens()->where('name', $deviceName)->delete();
-
+        // Mint a fresh token without revoking previous ones.
+        //
+        // Previously we ran `$user->tokens()->where('name', $deviceName)->delete()`
+        // here, intending "one token per device". But $deviceName falls back
+        // to substr($userAgent, 0, 64), which is identical across users on
+        // the same browser/OS (e.g. two Chrome-on-Windows clients sharing
+        // the same admin account). That made login B silently log out
+        // session A on its next API call (401 → auto-logout). Allowing
+        // multiple concurrent tokens per user is safer; Sanctum's
+        // `prune-expired` task cleans up stale ones.
         $abilities = $user->isAdmin() ? ['*'] : ['content:*'];
         $token = $user->createToken($deviceName, $abilities);
 
