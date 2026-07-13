@@ -16,16 +16,20 @@ use Illuminate\Http\Request;
 class ProgramMonthController extends Controller
 {
     /**
-     * GET /api/v1/admin/programme
+     * GET /api/v1/admin/programme?formation_id=N
      *
-     * Returns ALL months (including inactive). Ordered by position so the
-     * admin sees them in the same order as the public site.
+     * Returns ALL months (including inactive), optionally filtered to one
+     * formation. Ordered by formation then position so the admin sees each
+     * formation's programme grouped in public-site order.
      */
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', ProgramMonth::class);
 
         $items = ProgramMonth::query()
+            ->with('formation:id,title,slug')
+            ->forFormation($request->query('formation_id'))
+            ->orderBy('formation_id')
             ->orderBy('position')
             ->orderBy('id')
             ->get();
@@ -37,7 +41,7 @@ class ProgramMonthController extends Controller
     {
         $this->authorize('view', $month);
 
-        return ApiResponse::success(new ProgramMonthAdminResource($month));
+        return ApiResponse::success(new ProgramMonthAdminResource($month->load('formation:id,title,slug')));
     }
 
     public function store(StoreProgramMonthRequest $request): JsonResponse
@@ -48,14 +52,14 @@ class ProgramMonthController extends Controller
 
         $month = ProgramMonth::query()->create($data);
 
-        return ApiResponse::created(new ProgramMonthAdminResource($month));
+        return ApiResponse::created(new ProgramMonthAdminResource($month->load('formation:id,title,slug')));
     }
 
     public function update(UpdateProgramMonthRequest $request, ProgramMonth $month): JsonResponse
     {
         $month->update($request->validated());
 
-        return ApiResponse::success(new ProgramMonthAdminResource($month->fresh()));
+        return ApiResponse::success(new ProgramMonthAdminResource($month->fresh()->load('formation:id,title,slug')));
     }
 
     public function destroy(Request $request, ProgramMonth $month): JsonResponse

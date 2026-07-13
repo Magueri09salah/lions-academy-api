@@ -18,6 +18,7 @@ class StoreProgramMonthRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'formation_id' => ['required', 'integer', 'exists:formations,id'],
             'position' => ['required', 'integer', 'min:1', 'max:255'],
             'month_label' => ['required', 'string', 'min:1', 'max:32'],
             'title' => ['required', 'string', 'min:2', 'max:200'],
@@ -34,6 +35,7 @@ class StoreProgramMonthRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'formation_id' => 'formation',
             'position' => 'position',
             'month_label' => 'libellé du mois',
             'title' => 'titre',

@@ -70,6 +70,11 @@ class Formation extends Model
         return $this->hasMany(Registration::class);
     }
 
+    public function programMonths(): HasMany
+    {
+        return $this->hasMany(ProgramMonth::class);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_active', true);

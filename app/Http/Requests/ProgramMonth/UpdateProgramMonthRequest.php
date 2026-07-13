@@ -21,6 +21,7 @@ class UpdateProgramMonthRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'formation_id' => ['sometimes', 'required', 'integer', 'exists:formations,id'],
             'position' => ['sometimes', 'required', 'integer', 'min:1', 'max:255'],
             'month_label' => ['sometimes', 'required', 'string', 'min:1', 'max:32'],
             'title' => ['sometimes', 'required', 'string', 'min:2', 'max:200'],

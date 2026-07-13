@@ -22,6 +22,11 @@ class ProgramMonthAdminResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'formation' => $this->formation ? [
+                'id' => $this->formation->id,
+                'title' => $this->formation->title,
+                'slug' => $this->formation->slug,
+            ] : null,
             'position' => $this->position,
             'month_label' => $this->month_label,
             'title' => $this->title,
