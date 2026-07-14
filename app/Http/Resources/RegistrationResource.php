@@ -96,7 +96,7 @@ class RegistrationResource extends JsonResource
     private function buildAcademyMessage(): string
     {
         return sprintf(
-            'Bonjour Lions Academy, je viens de soumettre une demande d\'inscription à "%s" sous le nom %s. Merci de me recontacter.',
+            'Bonjour Lions Academie, je viens de soumettre une demande d\'inscription à "%s" sous le nom %s. Merci de me recontacter.',
             $this->formation_title ?? 'la formation',
             $this->full_name,
         );
@@ -109,7 +109,7 @@ class RegistrationResource extends JsonResource
     private function buildApplicantMessage(): string
     {
         return sprintf(
-            'Bonjour %s, c\'est Lions Academy. Nous revenons vers vous concernant votre inscription à "%s".',
+            'Bonjour %s, c\'est Lions Academie. Nous revenons vers vous concernant votre inscription à "%s".',
             $this->full_name,
             $this->formation_title ?? 'la formation',
         );

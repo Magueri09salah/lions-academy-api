@@ -97,7 +97,7 @@ class RegistrationConcoursResource extends JsonResource
     private function buildAcademyMessage(): string
     {
         return sprintf(
-            'Bonjour Lions Academy, je viens de soumettre une demande de préparation au concours ENA sous le nom %s. Merci de me recontacter.',
+            'Bonjour Lions Academie, je viens de soumettre une demande de préparation au concours ENA sous le nom %s. Merci de me recontacter.',
             $this->full_name,
         );
     }
@@ -105,7 +105,7 @@ class RegistrationConcoursResource extends JsonResource
     private function buildApplicantMessage(): string
     {
         return sprintf(
-            'Bonjour %s, c\'est Lions Academy. Nous revenons vers vous concernant votre demande de préparation au concours ENA.',
+            'Bonjour %s, c\'est Lions Academie. Nous revenons vers vous concernant votre demande de préparation au concours ENA.',
             $this->full_name,
         );
     }
